@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <form onsubmit="login(event)">
+        <label for="username">Username:</label>
+        <input type="text" id="username">
+        <label for="password">Password:</label>
+        <input type="password" id="password">
+        <button>送出</button>
+    </form>
+    <script>
+    function login(e){
+    e.preventDefault();
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+    fetch("/login",{
+        headers:{
+            "Content-Type": "application/json"
+        },
+        method: "post",
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
+    })
+    .then(function(res){
+        // 接到從server傳來的res，用json()轉成json格式
+        //return回傳到下面的then()
+        return res.json()
+    })
+    .then(function(data){
+        if(data.login){
+            localStorage.setItem("jwt", data.token);
+            //登入成功 導向至首頁
+            location.href = "/";
+        }else{
+            //失敗 跳出警告
+            alert("login failed");
+            //用alert不是很好 但偷懶一下
+        }
+    });
+    }
+    </script>
+</body>
+</html>
